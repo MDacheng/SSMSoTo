@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdc.dao.QuestionDao">
+    <select id="getQuestion" parameterType="int" resultType="com.mdc.beans.Question">
+        SELECT * FROM question WHERE id=#{id}
+    </select>
+    <insert id="addQuestion" parameterType="com.mdc.beans.Question" flushCache="true">
+        INSERT INTO question (id,content,knowledge,answer,type,difficulty) VALUES (#{id},#{content},#{knowledge},#{answer},#{type},#{difficulty})
+    </insert>
+    <update id="updateQuestion" parameterType="com.mdc.beans.Question">
+        UPDATE question SET content=#{content},knowledge=#{knowledge},answer=#{answer},type=#{type},difficulty=#{difficulty} WHERE id=#{id}
+    </update>
+    <delete id="deleteQuestion" parameterType="int">
+        DELETE FROM question WHERE id=#{id}
+    </delete>
+    <resultMap id="questionList" type="com.mdc.beans.Question">
+        <id column="id" property="id" />
+        <result column="content" property="content" />
+        <result column="knowledge" property="knowledge" />
+        <result column="answer" property="answer" />
+        <result column="type" property="type" />
+        <result column="difficulty" property="difficulty" />
+    </resultMap>
+    <select id="getAllQuestion" resultMap="questionList">
+        SELECT * FROM question
+    </select>
+    <select id="getPartQuestion" resultMap="questionList" parameterType="int">
+        SELECT * FROM question LIMIT #{start},20
+    </select>
+    <select id="getCount" resultType="int">
+        SELECT count(*) FROM question
+    </select>
+    <select id="getRandomQuestion" resultMap="questionList" parameterType="int">
+        SELECT * FROM question order by rand() limit #{count};
+    </select>
+</mapper>

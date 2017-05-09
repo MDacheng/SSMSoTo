@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mdc.dao.UserDao">
+    <select id="getUser" parameterType="String" resultType="com.mdc.beans.User">
+        SELECT * FROM t_user WHERE username=#{username}
+    </select>
+    <select id="getRoles" parameterType="String" resultType="java.lang.String">
+        SELECT r.rolename FROM t_user u, t_role r WHERE u.username=#{name}
+    </select>
+    <select id="getPermission" parameterType="String" resultType="java.lang.String">
+        SELECT p.permission FROM t_user u, t_permission p WHERE u.username=#{name}
+    </select>
+</mapper>

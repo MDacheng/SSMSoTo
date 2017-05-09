@@ -1,0 +1,37 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager"
+        p:cacheManagerConfigFile="classpath:enhance-cache.xml"/>
+
+    <!--凭证匹配器-->
+    <bean id="credentialsMatcher" class="com.mdc.util.RetryLimitHashedCredentialsMatcher"
+        p:hashAlgorithmName="md5"
+        p:hashIterations="2"
+        p:storedCredentialsHexEncoded="true"><constructor-arg ref="cacheManager" />
+    </bean>
+
+    <!--Realm-->
+    <bean id="userRealm" class="com.mdc.util.UserRealm"
+        p:credentialsMatcher-ref="credentialsMatcher"/>
+
+    <!--安全管理器-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager"
+        p:realm-ref="userRealm"/>
+
+    <!--Shiro的Web过滤器-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"
+        p:securityManager-ref="securityManager"
+        p:loginUrl="/"
+        p:unauthorizedUrl="/">
+        <property name="filterChainDefinitions">
+            <value>
+                /authc/admin = roles[admin]
+                /authc/** = authc
+                /** = anon
+            </value>
+        </property>
+    </bean>
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+</beans>
