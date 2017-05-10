@@ -2,11 +2,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
     <context:component-scan base-package="com.mdc.service" />
-    <bean id="paper" class="com.mdc.beans.Paper" scope="prototype" />
+    <!--下面声明一个paper的bean，这个bean的作用是记录当前用户的试卷信息，很显然，这个bean不是单例的，如果是单例的表明所有人都用一张试卷。
+        因此将scope设置为session，但是可以看到在PaperService中自动注入了paper，如果paper不是单例的，而paperService是单例的，那么直接注入是会产生问题的。
+        这时，需要使用AOP，在Http请求带来之后，AOP查找这个请求对应的线程，然后进行注入-->
+    <bean id="paper" class="com.mdc.beans.Paper" scope="session">
+        <aop:scoped-proxy />
+    </bean>
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           p:driverClassName="com.mysql.jdbc.Driver"
           p:url="jdbc:mysql://localhost:3306/composition?characterEncoding=utf8"
@@ -14,7 +19,10 @@
           p:password="199322" />
     <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSource"
-          p:configLocation="classpath:mybatis-config.xml" />
+          p:mapperLocations="classpath:com/mdc/dao/**/*.xml" />
+    <!--<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"-->
+          <!--p:basePackage="com.mdc.dao"-->
+          <!--p:sqlSessionFactoryBeanName="sessionFactory"/>-->
     <bean id="questionDao" class="org.mybatis.spring.mapper.MapperFactoryBean"
           p:mapperInterface="com.mdc.dao.QuestionDao"
           p:sqlSessionFactory-ref="sessionFactory" />
