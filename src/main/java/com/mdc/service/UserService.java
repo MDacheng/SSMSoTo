@@ -6,6 +6,7 @@ import com.mdc.beans.User;
 import com.mdc.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
  * Created by mengdacheng on 2017/5/5.
  */
 @Service
+@Transactional
 public class UserService {
 
     @Autowired

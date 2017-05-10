@@ -4,6 +4,7 @@ import com.mdc.beans.Question;
 import com.mdc.dao.QuestionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * Created by mengdacheng on 2017/5/5.
  */
 @Service
+@Transactional
 public class QuestionService {
 
     private QuestionDao questionDao;

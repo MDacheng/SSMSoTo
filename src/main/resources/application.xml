@@ -3,8 +3,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <bean class="com.mdc.util.Log4jConfig">
         <constructor-arg name="reload" value="true"/>
@@ -15,7 +18,7 @@
     <!--下面声明一个paper的bean，这个bean的作用是记录当前用户的试卷信息，很显然，这个bean不是单例的，如果是单例的表明所有人都用一张试卷。
         因此将scope设置为session，但是可以看到在PaperService中自动注入了paper，如果paper不是单例的，而paperService是单例的，那么直接注入是会产生问题的。
         这时，需要使用AOP，在Http请求带来之后，AOP查找这个请求对应的线程，然后进行注入-->
-    <bean id="paper" class="com.mdc.beans.Paper" scope="session">
+    <bean id="paper" class="com.mdc.beans.Paper">
         <aop:scoped-proxy />
     </bean>
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -23,6 +26,31 @@
           p:url="jdbc:mysql://localhost:3306/composition?characterEncoding=utf8"
           p:username="root"
           p:password="199322" />
+    <!--声明事务管理器-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="dataSource"/>
+
+    <!--基于注解的事务-->
+    <tx:annotation-driven transaction-manager="txManager" />
+
+    <!--声明式事务-->
+    <!--&lt;!&ndash;定义aop的目标方法&ndash;&gt;-->
+    <!--<aop:config>-->
+        <!--&lt;!&ndash;定义切面&ndash;&gt;-->
+        <!--<aop:pointcut id="serviceMethod" expression="execution(* com.mdc.service.*service.*(..))" />-->
+        <!--&lt;!&ndash;配置增强&ndash;&gt;-->
+        <!--<aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice" />-->
+    <!--</aop:config>-->
+    <!--&lt;!&ndash;定义增强&ndash;&gt;-->
+    <!--<tx:advice id="txAdvice">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="get*" read-only="false"/>-->
+            <!--<tx:method name="add*" rollback-for="Exception" />-->
+            <!--<tx:method name="update*" />-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--配置mybatis映射-->
     <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSource"
           p:mapperLocations="classpath:com/mdc/dao/**/*.xml" />

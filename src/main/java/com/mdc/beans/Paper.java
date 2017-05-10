@@ -1,11 +1,14 @@
 package com.mdc.beans;
 
+import org.springframework.context.annotation.Scope;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by mengdacheng on 2017/5/5.
  */
+@Scope("session")
 public class Paper {
     private List<Question> questionList = new ArrayList<Question>();
 
