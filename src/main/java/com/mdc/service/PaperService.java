@@ -2,6 +2,7 @@ package com.mdc.service;
 
 import com.mdc.beans.Paper;
 import com.mdc.beans.Question;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;

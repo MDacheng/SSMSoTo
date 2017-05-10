@@ -5,7 +5,6 @@ import com.mdc.dao.QuestionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -13,8 +12,14 @@ import java.util.List;
  */
 @Service
 public class QuestionService {
-    @Autowired
+
     private QuestionDao questionDao;
+
+    @Autowired
+    public QuestionService(QuestionDao questionDao){
+        if(questionDao == null) System.err.println("questionDao is null");
+        this.questionDao = questionDao;
+    }
 
     public void addQuestion(Question question){
         questionDao.addQuestion(question);
